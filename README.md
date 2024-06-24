@@ -9,17 +9,37 @@ _**[Haonan Qiu](http://haonanqiu.com/), [Zhaoxi Chen](https://frozenburning.gith
 <br>
 (* corresponding author)
 
-<img src=assets/demo/chihuahua.gif>
-<p>Input: "<font color="red">A chihuahua</font> in an astronaut suit floating in the universe, cinematic lighting, glow effect." 
-</p>
-<img src=assets/demo/swan.gif>
-<p>Input: "<font color="red">A swan</font> floating gracefully on a lake."
-</p>
-</div>
-<br>
+
+## 🔆 Introduction
+
+🤗🤗🤗 FreeTraj is a tuning-free method for trajectory-controllable video generation based on pre-trained video diffusion models.
+
+### Showcases (512x320)
+
+<table class="center">
+  <td><img src=assets/demo/0047_1_0.4_0.3.gif width="256"></td>
+  <td><img src=assets/demo/0026_0_0.4_0.4.gif width="256"></td>
+  <td><img src=assets/demo/0035_1_0.35_0.35.gif width="256"></td>
+  <tr>
+  <td style="text-align:center;" width="256">"<b>A chihuahua</b> in an astronaut suit floating in the universe, cinematic lighting, glow effect."</td>
+  <td style="text-align:center;" width="256">"<b>A swan</b> floating gracefully on a lake."</td>
+  <td style="text-align:center;" width="256">"<b>A corgi</b> running on the grassland on the grassland."</td>
+  <tr>
+</table >
+
+<table class="center">
+  <td><img src=assets/demo/0051_1_0.4_0.4.gif width="256"></td>
+  <td><img src=assets/demo/0041_0_0.35_0.35.gif width="256"></td>
+  <td><img src=assets/demo/0019_0_0.3_0.3.gif width="256"></td>
+  <tr>
+  <td style="text-align:center;" width="256">"<b>A barrel</b> floating in a river."</td>
+  <td style="text-align:center;" width="256">"<b>A dog</b> running across the garden, photorealistic, 4k."</td>
+  <td style="text-align:center;" width="256">"<b>A helicopter</b> hovering above a cityscape."</td>
+  <tr>
+</table >
 
 ## 📝 Changelog
-- __[2024.06.24]__: 🔥🔥 Code coming soon (under organizing)
+- __[2024.06.25]__: 🔥🔥 Code coming soon (under cleaning)
 <br>
 
 
