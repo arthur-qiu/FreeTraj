@@ -12,7 +12,7 @@ _**[Haonan Qiu](http://haonanqiu.com/), [Zhaoxi Chen](https://frozenburning.gith
 
 🤗🤗🤗 FreeTraj is a tuning-free method for trajectory-controllable video generation based on pre-trained video diffusion models.
 
-### Showcases (512x320)
+### Showcases (320x512)
 
 <table class="center">
   <td><img src=assets/demo/0047_1_0.4_0.3.gif width="256"></td>
