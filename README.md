@@ -3,9 +3,7 @@
  <a href='https://arxiv.org/abs/2406.16863'><img src='https://img.shields.io/badge/arXiv-2406.16863-b31b1b.svg'></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
  <a href='http://haonanqiu.com/projects/FreeTraj.html'><img src='https://img.shields.io/badge/Project-Page-Green'></a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-_**[Haonan Qiu](http://haonanqiu.com/), [Zhaoxi Chen](https://frozenburning.github.io/), [Zhouxia Wang](http://luoping.me/author/zhouxia-wang/),
-<br>
-[Yingqing He](https://github.com/YingqingHe), [Menghan Xia*](https://menghanxia.github.io), and [Ziwei Liu*](https://liuziwei7.github.io/)**_
+_**[Haonan Qiu](http://haonanqiu.com/), [Zhaoxi Chen](https://frozenburning.github.io/), [Zhouxia Wang](http://luoping.me/author/zhouxia-wang/), [Yingqing He](https://github.com/YingqingHe), [Menghan Xia*](https://menghanxia.github.io), and [Ziwei Liu*](https://liuziwei7.github.io/)**_
 <br>
 (* corresponding author)
 
