@@ -141,7 +141,7 @@ def run_inference(args, gpu_num, gpu_no, **kwargs):
         batch_samples = batch_ddim_sampling_freetraj(model, cond, noise_shape, args.n_samples, \
                                                 args.ddim_steps, args.ddim_eta, args.unconditional_guidance_scale, idx_list=idx_list, input_traj=input_traj, args=args, **kwargs)
         ## b,samples,c,t,h,w
-        save_videos(batch_samples, args.savedir, filenames, fps=args.savefps)
+        # save_videos(batch_samples, args.savedir, filenames, fps=args.savefps)
         save_videos_with_bbox(batch_samples, args.savedir, bboxdir, filenames, fps=args.savefps, input_traj=input_traj)
 
     print(f"Saved in {args.savedir}. Time used: {(time.time() - start):.2f} seconds")
