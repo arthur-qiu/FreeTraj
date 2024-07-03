@@ -91,5 +91,5 @@ pip install -r requirements.txt
 <br>
 
 ## 📢 Disclaimer
-We develop this repository for RESEARCH purposes, so it can only be used for personal/research/non-commercial purposes. Due to the variaity of generative video prior, the success rate is not guaranteed.
+We develop this repository for RESEARCH purposes, so it can only be used for personal/research/non-commercial purposes. The success rate is not guaranteed due to the variety of generative video prior. 
 ****
