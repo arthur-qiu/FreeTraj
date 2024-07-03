@@ -40,7 +40,7 @@ def get_parser():
     # FreeTraj
     parser.add_argument("--ddim_edit", type=int, default=6, help="steps of ddim for edited attention")
     parser.add_argument("--idx_file", type=str, default=None, help="a index file containing many prompts")
-    parser.add_argument("--path_file", type=str, default=None, help="a path file containing many prompts")
+    parser.add_argument("--traj_file", type=str, default=None, help="a path file containing many prompts")
     return parser
 
 
