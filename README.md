@@ -36,8 +36,10 @@ _**[Haonan Qiu](http://haonanqiu.com/), [Zhaoxi Chen](https://frozenburning.gith
   <tr>
 </table >
 
+
 ## 📝 Changelog
-- __[2024.06.25]__: 🔥🔥 Code coming soon (under cleaning)
+- __[2024.07.04]__: 🔥🔥 Release the FreeTraj, trajectory controllable video generation!
+- TODO: 1. interface 2. more modes
 <br>
 
 
@@ -46,6 +48,33 @@ _**[Haonan Qiu](http://haonanqiu.com/), [Zhaoxi Chen](https://frozenburning.gith
 |Model|Resolution|Checkpoint|Description
 |:---------|:---------|:--------|:--------|
 |VideoCrafter2 (Text2Video)|320x512|[Hugging Face](https://huggingface.co/VideoCrafter/VideoCrafter2/blob/main/model.ckpt)|
+
+<br>
+
+
+## ⚙️ Setup
+
+### Install Environment via Anaconda (Recommended)
+```bash
+conda create -n freetraj python=3.8.5
+conda activate freetraj
+pip install -r requirements.txt
+```
+<br>
+
+
+## 💫 Inference (Text-to-Video )
+### 1. Demo
+
+1) Download pretrained T2V models via [Hugging Face](https://huggingface.co/VideoCrafter/Text2Video-512-v2/blob/main/model.ckpt), and put the `model.ckpt` in `checkpoints/base_512_v2/model.ckpt`.
+2) Input the following commands in terminal.
+```bash
+  sh scripts/run_text2video_freetraj_512.sh
+```
+
+### 2. Plan new trajectory
+1) Write new trajectory files, the format should be `frame index, h start, h end, w start, w end`. In the current version, the bbox size should be the same. Please refer to `prompts/freetraj/traj_l.txt`.
+2) Modify `scripts/run_text2video_freetraj_512.sh` and set `$traj_file`.
 
 <br>
 
@@ -59,3 +88,8 @@ _**[Haonan Qiu](http://haonanqiu.com/), [Zhaoxi Chen](https://frozenburning.gith
       archivePrefix={arXiv}
 }
 ```
+<br>
+
+## 📢 Disclaimer
+We develop this repository for RESEARCH purposes, so it can only be used for personal/research/non-commercial purposes. Due to the variaity of generative video prior, the success rate is not guaranteed.
+****
