@@ -95,7 +95,7 @@ def get_path(BOX_SIZE_H=0.3, BOX_SIZE_W=0.3, input_mode=0):
 
 # input: List([frame, h_start, h_end, w_start, w_end], ...)
 # return: List([h_start, h_end, w_start, w_end], ...)
-def plan_path(input):
+def plan_path(input, video_length = 16):
     len_input = len(input)
     path = [input[0][1:]]
     for i in range(1, len_input):
@@ -111,6 +111,18 @@ def plan_path(input):
             increase_frame = j - start_frame
             path += [[increase_frame * h_start_change + start[1], increase_frame * h_end_change + start[2], increase_frame * w_start_change + start[3], increase_frame * w_end_change + start[4]]]
  
+    if input[0][0] > 0:
+        h_change = path[1][0] - path[0][0]
+        w_change = path[1][2] - path[0][2]
+        for i in range(input[0][0]):
+            path = [path[0][0] - h_change, path[0][1] - h_change, path[0][2] - w_change, path[0][3] - w_change] + path
+
+    if input[-1][0] < video_length - 1:
+        h_change = path[-1][0] - path[-2][0]
+        w_change = path[-1][2] - path[-2][2]
+        for i in range(video_length - 1 - input[-1][0]):
+            path = path + [path[-1][0] + h_change, path[-1][1] + h_change, path[-1][2] + w_change, path[-1][3] + w_change]
+
     return path
 
 

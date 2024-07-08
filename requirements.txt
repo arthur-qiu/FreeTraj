@@ -21,3 +21,4 @@ timm
 scikit-learn 
 open_clip_torch==2.22.0
 kornia
+gradio==4.37.2
