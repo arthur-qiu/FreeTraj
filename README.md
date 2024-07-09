@@ -61,6 +61,7 @@ conda create -n freetraj python=3.8.5
 conda activate freetraj
 pip install -r requirements.txt
 ```
+
 <br>
 
 
@@ -69,6 +70,8 @@ pip install -r requirements.txt
 ```bash
   gradio app/app.py
 ```
+
+<br>
 
 ## 💫 Inference with Command
 ### 1. Demo
