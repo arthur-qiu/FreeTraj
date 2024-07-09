@@ -39,7 +39,8 @@ _**[Haonan Qiu](http://haonanqiu.com/), [Zhaoxi Chen](https://frozenburning.gith
 
 ## 📝 Changelog
 - __[2024.07.04]__: 🔥🔥 Release the FreeTraj, trajectory controllable video generation!
-- TODO: 1. interface 2. more modes
+- __[2024.07.09]__: 🔥🔥 Release a user-friendly interface.
+- TODO: 1. a powerful mode for better control.
 <br>
 
 

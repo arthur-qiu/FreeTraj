@@ -1,7 +1,8 @@
-import gradio as gr
-
 import sys
-import pandas as pd
+import random
+import gradio as gr
+import matplotlib.pyplot as plt
+
 import os
 import argparse
 import random
@@ -18,6 +19,7 @@ from funcs import (
     load_model_checkpoint,
 )
 from utils.utils import instantiate_from_config
+from utils.utils_freetraj import plan_path
 
 MAX_KEYS = 5
 
@@ -450,10 +452,10 @@ def demo_update_h(mode):
         h_positions.append(gr.Slider(value=0.9))
     elif mode == 'left->right->left->right':
         num = 4
-        h_positions.append(gr.Slider(value=0.1))
-        h_positions.append(gr.Slider(value=0.9))
-        h_positions.append(gr.Slider(value=0.1))
-        h_positions.append(gr.Slider(value=0.9))
+        h_positions.append(gr.Slider(value=0.5))
+        h_positions.append(gr.Slider(value=0.5))
+        h_positions.append(gr.Slider(value=0.5))
+        h_positions.append(gr.Slider(value=0.5))
     elif mode == 'triangle':
         num = 4
         h_positions.append(gr.Slider(value=0.1))
@@ -501,10 +503,10 @@ def demo_update_w(mode):
         w_positions.append(gr.Slider(value=0.1))
     elif mode == 'left->right->left->right':
         num = 4
-        w_positions.append(gr.Slider(value=0.5))
-        w_positions.append(gr.Slider(value=0.5))
-        w_positions.append(gr.Slider(value=0.5))
-        w_positions.append(gr.Slider(value=0.5))
+        w_positions.append(gr.Slider(value=0.1))
+        w_positions.append(gr.Slider(value=0.9))
+        w_positions.append(gr.Slider(value=0.1))
+        w_positions.append(gr.Slider(value=0.9))
     elif mode == 'triangle':
         num = 4
         w_positions.append(gr.Slider(value=0.5))
@@ -519,23 +521,26 @@ def demo_update_w(mode):
     return w_positions
 
 def plot_update(*positions):
-    key_length = int(positions[-1])
+    key_length = positions[-1]
     frame_indices = positions[:key_length]
+    if type(key_length) != int or len(frame_indices) < 2:
+        traj_plot = gr.Plot(
+            label="Trajectory"
+        )
+        return traj_plot
+    frame_indices = [int(i) for i in frame_indices]
     h_positions = positions[MAX_KEYS:MAX_KEYS+key_length]
-    h_positions_re = []
-    for i in h_positions:
-        h_positions_re.append(-i)
     w_positions = positions[2*MAX_KEYS:2*MAX_KEYS+key_length]
-    traj_plot = gr.ScatterPlot(
-        value=pd.DataFrame({"x": w_positions, "y": h_positions_re, "frame": frame_indices}),
-        x="x",
-        y="y",
-        color='frame',
-        x_lim= [-0.05, 1.05],
-        y_lim= [-1.05, 0.05],
+    frame_indices, h_positions, w_positions = zip(*sorted(zip(frame_indices, h_positions, w_positions)))
+    plt.cla()
+    plt.xlim(0, 1)
+    plt.ylim(0, 1)
+    plt.gca().invert_yaxis()
+    plt.gca().xaxis.tick_top()
+    plt.plot(w_positions, h_positions, linestyle='-', marker = 'o', markerfacecolor='r')
+    traj_plot = gr.Plot(
         label="Trajectory",
-        width=512,
-        height=320,
+        value = plt
     )
     return traj_plot
 
@@ -565,133 +570,142 @@ with gr.Blocks(css=css) as demo:
             video_result = gr.Video(label="Video Output")
             video_result_bbox = gr.Video(label="Video Output with BBox")
 
-        with gr.Row():
-            prompt_in = gr.Textbox(label="Prompt", placeholder="A corgi running on the grassland on the grassland.", scale = 3)
-            target_indices = gr.Textbox(label="Target Indices", placeholder="1,2", scale = 1)
+        with gr.Group():
+            with gr.Row():
+                prompt_in = gr.Textbox(label="Prompt", placeholder="A corgi running on the grassland on the grassland.", scale = 3)
+                target_indices = gr.Textbox(label="Target Indices", placeholder="1,2", scale = 1)
 
-        with gr.Row():
-            radio_mode = gr.Radio(label='Trajectory Mode', choices = ['demo', 'diy', 'ori'], scale = 1)
-            height_ratio = gr.Slider(label='Height Ratio of BBox',
-                              minimum=0.2,
-                              maximum=0.4,
-                              step=0.01,
-                              value=0.3,
-                              scale = 1)
-            width_ratio = gr.Slider(label='Width Ratio of BBox',
-                              minimum=0.2,
-                              maximum=0.4,
-                              step=0.01,
-                              value=0.3, 
-                              scale = 1)
-          
-        with gr.Row(visible=False) as row_demo:
-            dropdown_demo = gr.Dropdown(
-                label="Demo Trajectory",
-                choices= ['topleft->bottomright', 'bottomleft->topright', 'topleft->bottomleft->bottomright', 'bottomright->topright->topleft', '"V"', '"^"', 'left->right->left->right', 'triangle']
-            )
+            with gr.Row():
+                radio_mode = gr.Radio(label='Trajectory Mode', choices = ['demo', 'diy', 'ori'], scale = 1)
+                height_ratio = gr.Slider(label='Height Ratio of BBox',
+                                minimum=0.2,
+                                maximum=0.4,
+                                step=0.01,
+                                value=0.3,
+                                scale = 1)
+                width_ratio = gr.Slider(label='Width Ratio of BBox',
+                                minimum=0.2,
+                                maximum=0.4,
+                                step=0.01,
+                                value=0.3, 
+                                scale = 1)
             
-        with gr.Row(visible=False) as row_diy:
-            dropdown_diy = gr.Dropdown(
-                label="Number of keyframes",
-                choices=range(2, MAX_KEYS+1),
-            )
-            
-        for i in range(MAX_KEYS):
-            with gr.Row(visible=False) as row:
-                text = f"Keyframe #{i}"
-                text = gr.HTML(text, visible=True)
-                frame_ids = gr.Textbox(
-                    None,
-                    label=f"Frame Indices #{i}",
-                    visible=True,
-                    interactive=True,
-                    scale=1
+            with gr.Row(visible=False) as row_demo:
+                dropdown_demo = gr.Dropdown(
+                    label="Demo Trajectory",
+                    choices= ['topleft->bottomright', 'bottomleft->topright', 'topleft->bottomleft->bottomright', 'bottomright->topright->topleft', '"V"', '"^"', 'left->right->left->right', 'triangle']
                 )
-                h_position = gr.Slider(label='Position in Height',
-                    minimum=0.0,
-                    maximum=1.0,
-                    step=0.01,
-                    scale=1)
-                w_position = gr.Slider(label='Position in Width',
-                    minimum=0.0,
-                    maximum=1.0,
-                    step=0.01,
-                    scale=1)
                 
-            frame_indices.append(frame_ids)
-            h_positions.append(h_position)
-            w_positions.append(w_position)
-            keyframes.append(row)
-
-
-        dropdown_demo.change(demo_update, dropdown_demo, dropdown_diy)
-        dropdown_diy.change(keyframe_update, dropdown_diy, keyframes)
-        dropdown_demo.change(demo_update_frame, dropdown_demo, frame_indices)
-        dropdown_demo.change(demo_update_h, dropdown_demo, h_positions)
-        dropdown_demo.change(demo_update_w, dropdown_demo, w_positions)
-        radio_mode.change(mode_update, radio_mode, [row_demo, row_diy])
-
-        traj_plot = gr.ScatterPlot(
-            label="Trajectory",
-            width=512,
-            height=320,
-        )
-
-        h_positions[0].change(plot_update, frame_indices + h_positions + w_positions + [dropdown_diy], traj_plot)
-        h_positions[1].change(plot_update, frame_indices + h_positions + w_positions + [dropdown_diy], traj_plot)
-        h_positions[2].change(plot_update, frame_indices + h_positions + w_positions + [dropdown_diy], traj_plot)
-        h_positions[3].change(plot_update, frame_indices + h_positions + w_positions + [dropdown_diy], traj_plot)
-        h_positions[4].change(plot_update, frame_indices + h_positions + w_positions + [dropdown_diy], traj_plot)
-        w_positions[0].change(plot_update, frame_indices + h_positions + w_positions + [dropdown_diy], traj_plot)
-        w_positions[1].change(plot_update, frame_indices + h_positions + w_positions + [dropdown_diy], traj_plot)
-        w_positions[2].change(plot_update, frame_indices + h_positions + w_positions + [dropdown_diy], traj_plot)
-        w_positions[3].change(plot_update, frame_indices + h_positions + w_positions + [dropdown_diy], traj_plot)
-        w_positions[4].change(plot_update, frame_indices + h_positions + w_positions + [dropdown_diy], traj_plot)
-
-        with gr.Row():
-            with gr.Accordion('Useful FreeTraj Parameters (feel free to adjust these parameters based on your prompt): ', open=True):
-                with gr.Row():
-                    ddim_edit = gr.Slider(label='Editing Steps (larger for better control while losing some quality)',
-                             minimum=0,
-                             maximum=12,
-                             step=1,
-                             value=6)
-                    seed = gr.Slider(label='Random Seed',
-                             minimum=0,
-                             maximum=10000,
-                             step=1,
-                             value=123)
+            with gr.Row(visible=False) as row_diy:
+                dropdown_diy = gr.Dropdown(
+                    label="Number of keyframes",
+                    choices=range(2, MAX_KEYS+1),
+                )
+                
+            for i in range(MAX_KEYS):
+                with gr.Row(visible=False) as row:
+                    text = gr.Textbox(
+                        value=f"Keyframe #{i}",
+                        interactive=False,
+                        container = False,
+                        lines = 3,
+                        scale=1
+                    )
+                    frame_ids = gr.Textbox(
+                        None,
+                        label=f"Frame Indices #{i}",
+                        interactive=True,
+                        scale=2
+                    )
+                    h_position = gr.Slider(label='Position in Height',
+                        minimum=0.0,
+                        maximum=1.0,
+                        step=0.01,
+                        scale=2)
+                    w_position = gr.Slider(label='Position in Width',
+                        minimum=0.0,
+                        maximum=1.0,
+                        step=0.01,
+                        scale=2)
                     
-        with gr.Row():
-            with gr.Accordion('Useless FreeTraj Parameters (mostly no need to adjust): ', open=False):
-                with gr.Row():
-                    ddim_steps = gr.Slider(label='DDIM Steps',
-                              minimum=5,
-                              maximum=200,
-                              step=1,
-                              value=50)
-                    unconditional_guidance_scale = gr.Slider(label='Unconditional Guidance Scale',
-                              minimum=1.0,
-                              maximum=20.0,
-                              step=0.1,
-                              value=12.0)
-                with gr.Row():
-                    video_fps = gr.Slider(label='Video FPS (larger for quicker motion)',
-                              minimum=8,
-                              maximum=36,
-                              step=4,
-                              value=16)
-                    save_fps = gr.Slider(label='Save FPS',
-                              minimum=1,
-                              maximum=30,
-                              step=1,
-                              value=10)
+                frame_indices.append(frame_ids)
+                h_positions.append(h_position)
+                w_positions.append(w_position)
+                keyframes.append(row)
+
+
+            dropdown_demo.change(demo_update, dropdown_demo, dropdown_diy)
+            dropdown_diy.change(keyframe_update, dropdown_diy, keyframes)
+            dropdown_demo.change(demo_update_frame, dropdown_demo, frame_indices)
+            dropdown_demo.change(demo_update_h, dropdown_demo, h_positions)
+            dropdown_demo.change(demo_update_w, dropdown_demo, w_positions)
+            radio_mode.change(mode_update, radio_mode, [row_demo, row_diy])
+
+            traj_plot = gr.Plot(
+                label="Trajectory"
+            )
+
+            h_positions[0].change(plot_update, frame_indices + h_positions + w_positions + [dropdown_diy], traj_plot)
+            h_positions[1].change(plot_update, frame_indices + h_positions + w_positions + [dropdown_diy], traj_plot)
+            h_positions[2].change(plot_update, frame_indices + h_positions + w_positions + [dropdown_diy], traj_plot)
+            h_positions[3].change(plot_update, frame_indices + h_positions + w_positions + [dropdown_diy], traj_plot)
+            h_positions[4].change(plot_update, frame_indices + h_positions + w_positions + [dropdown_diy], traj_plot)
+            w_positions[0].change(plot_update, frame_indices + h_positions + w_positions + [dropdown_diy], traj_plot)
+            w_positions[1].change(plot_update, frame_indices + h_positions + w_positions + [dropdown_diy], traj_plot)
+            w_positions[2].change(plot_update, frame_indices + h_positions + w_positions + [dropdown_diy], traj_plot)
+            w_positions[3].change(plot_update, frame_indices + h_positions + w_positions + [dropdown_diy], traj_plot)
+            w_positions[4].change(plot_update, frame_indices + h_positions + w_positions + [dropdown_diy], traj_plot)
+
+            with gr.Row():
+                with gr.Accordion('Useful FreeTraj Parameters (feel free to adjust these parameters based on your prompt): ', open=True):
+                    with gr.Row():
+                        ddim_edit = gr.Slider(label='Editing Steps (larger for better control while losing some quality)',
+                                minimum=0,
+                                maximum=12,
+                                step=1,
+                                value=6)
+                        seed = gr.Slider(label='Random Seed',
+                                minimum=0,
+                                maximum=10000,
+                                step=1,
+                                value=123)
+                        
+            with gr.Row():
+                with gr.Accordion('Useless FreeTraj Parameters (mostly no need to adjust): ', open=False):
+                    with gr.Row():
+                        ddim_steps = gr.Slider(label='DDIM Steps',
+                                minimum=5,
+                                maximum=200,
+                                step=1,
+                                value=50)
+                        unconditional_guidance_scale = gr.Slider(label='Unconditional Guidance Scale',
+                                minimum=1.0,
+                                maximum=20.0,
+                                step=0.1,
+                                value=12.0)
+                    with gr.Row():
+                        video_fps = gr.Slider(label='Video FPS (larger for quicker motion)',
+                                minimum=8,
+                                maximum=36,
+                                step=4,
+                                value=16)
+                        save_fps = gr.Slider(label='Save FPS',
+                                minimum=1,
+                                maximum=30,
+                                step=1,
+                                value=10)
                 
         with gr.Row():
             submit_btn = gr.Button("Generate", variant='primary')
 
         with gr.Row():
             gr.Examples(label='Sample Prompts', examples=examples, inputs=[prompt_in, target_indices, ddim_edit, seed, ddim_steps, unconditional_guidance_scale, video_fps, save_fps, height_ratio, width_ratio, radio_mode, dropdown_diy, *frame_indices, *h_positions, *w_positions])
+
+        demo_list = ['0026_0_0.4_0.4.gif', '0047_1_0.4_0.3.gif', '0051_1_0.4_0.4.gif']
+        demo_pick = random.randint(0, len(demo_list) - 1)
+        with gr.Row():
+            for i in range(len(demo_list)):
+                gr.Image(show_label = False, show_download_button = False, value='assets/' + demo_list[i])
 
         with gr.Row():
             gr.Markdown(
@@ -716,6 +730,6 @@ with gr.Blocks(css=css) as demo:
     submit_btn.click(fn=infer,
             inputs=[prompt_in, target_indices, ddim_edit, seed, ddim_steps, unconditional_guidance_scale, video_fps, save_fps, height_ratio, width_ratio, radio_mode, dropdown_diy, *frame_indices, *h_positions, *w_positions],
             outputs=[video_result, video_result_bbox],
-            api_name="zrscp")
+            api_name="freetraj")
 
-demo.queue(max_size=12).launch(show_api=True)
+demo.queue(max_size=8).launch(show_api=True)
