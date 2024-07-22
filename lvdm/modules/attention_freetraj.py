@@ -123,7 +123,7 @@ class CrossAttention(nn.Module):
         hw = q.shape[0]
         w_base = 64
         h_base = 40
-        w_len = int((hw / w_base / h_base) ** 0.5 * h_base)
+        w_len = int((hw / w_base / h_base) ** 0.5 * w_base)
         h_len = int(hw / w_len)
         BOX_SIZE_H = input_traj[0][2] - input_traj[0][1]
         BOX_SIZE_W = input_traj[0][4] - input_traj[0][3]
