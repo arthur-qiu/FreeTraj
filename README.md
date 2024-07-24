@@ -76,7 +76,7 @@ pip install -r requirements.txt
 ## 💫 Inference with Command
 ### 1. Demo
 
-1) Download pretrained T2V models via [Hugging Face](https://huggingface.co/VideoCrafter/Text2Video-512-v2/blob/main/model.ckpt), and put the `model.ckpt` in `checkpoints/base_512_v2/model.ckpt`.
+1) Download pretrained T2V models via [Hugging Face](https://huggingface.co/VideoCrafter/VideoCrafter2/blob/main/model.ckpt), and put the `model.ckpt` in `checkpoints/base_512_v2/model.ckpt`.
 2) Input the following commands in terminal.
 ```bash
   sh scripts/run_text2video_freetraj_512.sh
