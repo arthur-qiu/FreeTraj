@@ -40,7 +40,6 @@ _**[Haonan Qiu](http://haonanqiu.com/), [Zhaoxi Chen](https://frozenburning.gith
 ## 📝 Changelog
 - __[2024.07.04]__: 🔥🔥 Release the FreeTraj, trajectory controllable video generation!
 - __[2024.07.09]__: 🔥🔥 Release a user-friendly interface.
-- TODO: 1. a powerful mode for better control.
 <br>
 
 
@@ -88,6 +87,11 @@ pip install -r requirements.txt
 3) Slightly increase `$ddim_edit` to enhance the control ability, but may reduce the video quality.
 
 <br>
+
+## 🚀 My Free Series
+[FreeScale](https://github.com/ali-vilab/FreeScale): Tuning-free method for high-resolution image/video generation.
+
+[FreeNoise](https://github.com/AILab-CVC/FreeNoise): Tuning-free method for longer video generation.
 
 ## 😉 Citation
 ```bib
