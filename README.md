@@ -78,12 +78,12 @@ pip install -r requirements.txt
 1) Download pretrained T2V models via [Hugging Face](https://huggingface.co/VideoCrafter/VideoCrafter2/blob/main/model.ckpt), and put the `model.ckpt` in `checkpoints/base_512_v2/model.ckpt`.
 2) Input the following commands in terminal.
 ```bash
-  sh scripts/run_text2video_freetraj_512.sh
+  sh scripts/run_text2video_freetraj.sh
 ```
 
 ### 2. Plan new trajectory
 1) Write new trajectory files, the format should be `frame index, h start, h end, w start, w end`. In the current version, the bbox size should be the same. Please refer to `prompts/freetraj/traj_l.txt`.
-2) Modify `scripts/run_text2video_freetraj_512.sh` and set `$traj_file`.
+2) Modify `scripts/run_text2video_freetraj.sh` and set `$traj_file`.
 3) Slightly increase `$ddim_edit` to enhance the control ability, but may reduce the video quality.
 
 <br>
