@@ -115,13 +115,13 @@ def plan_path(input, video_length = 16):
         h_change = path[1][0] - path[0][0]
         w_change = path[1][2] - path[0][2]
         for i in range(input[0][0]):
-            path = [path[0][0] - h_change, path[0][1] - h_change, path[0][2] - w_change, path[0][3] - w_change] + path
+            path = [[path[0][0] - h_change, path[0][1] - h_change, path[0][2] - w_change, path[0][3] - w_change]] + path
 
     if input[-1][0] < video_length - 1:
         h_change = path[-1][0] - path[-2][0]
         w_change = path[-1][2] - path[-2][2]
         for i in range(video_length - 1 - input[-1][0]):
-            path = path + [path[-1][0] + h_change, path[-1][1] + h_change, path[-1][2] + w_change, path[-1][3] + w_change]
+            path = path + [[path[-1][0] + h_change, path[-1][1] + h_change, path[-1][2] + w_change, path[-1][3] + w_change]]
 
     return path
 
